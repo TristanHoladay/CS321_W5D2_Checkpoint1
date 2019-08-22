@@ -23,6 +23,16 @@ namespace CS321_W5D2_BlogAPI.Core.Services
             //     Use the _userService to get the current users id.
             //     You may have to retrieve the blog in order to check user id
             // TODO: assign the current date to DatePublished
+
+            var postUserID = newPost.Blog?.UserId;
+
+            if(_userService.CurrentUserId != postUserID)
+            {
+                throw new ApplicationException("You can only make posts to your blog.");
+            }
+
+            newPost.DatePublished = DateTime.Now;
+
             return _postRepository.Add(newPost);
         }
 
@@ -45,12 +55,22 @@ namespace CS321_W5D2_BlogAPI.Core.Services
         {
             var post = this.Get(id);
             // TODO: prevent user from deleting from a blog that isn't theirs
+            if(post.Blog?.UserId != _userService.CurrentUserId)
+            {
+                throw new ApplicationException("You can only modify blogs that belong to you.");
+            }
             _postRepository.Remove(id);
         }
 
         public Post Update(Post updatedPost)
         {
             // TODO: prevent user from updating a blog that isn't theirs
+
+            var postUserId = updatedPost.Blog?.UserId;
+            if(postUserId != _userService.CurrentUserId)
+            {
+                throw new ApplicationException("You can only update blog posts that you created.");
+            }
             return _postRepository.Update(updatedPost);
         }
 
