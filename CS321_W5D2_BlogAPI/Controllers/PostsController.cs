@@ -11,6 +11,7 @@ using System.Linq;
 namespace CS321_W5D2_BlogAPI.Controllers
 {
     // TODO: secure controller actions that change data
+    [Authorize]
     [Route("api/[controller]")]
     public class PostsController : Controller
     {
@@ -26,6 +27,8 @@ namespace CS321_W5D2_BlogAPI.Controllers
         // TODO: get posts for blog
         // TODO: allow anyone to get, even if not logged in
         // GET /api/blogs/{blogId}/posts
+
+        [AllowAnonymous]
         [HttpGet("/api/blogs/{blogId}/posts")]
         public IActionResult Get(int blogId)
         {
@@ -46,6 +49,7 @@ namespace CS321_W5D2_BlogAPI.Controllers
         // TODO: get post by id
         // TODO: allow anyone to get, even if not logged in
         // GET api/blogs/{blogId}/posts/{postId}
+        [AllowAnonymous]
         [HttpGet("/api/blogs/{blogId}/posts/{postId}")]
         public IActionResult Get(int blogId, int postId)
         {
@@ -68,8 +72,17 @@ namespace CS321_W5D2_BlogAPI.Controllers
         public IActionResult Post(int blogId, [FromBody]PostModel postModel)
         {
             // TODO: replace the code below with the correct implementation
-            ModelState.AddModelError("AddPost", "Fix Me! Implement POST /api/blogs{blogId}/posts");
-            return BadRequest(ModelState);
+            try
+            {
+                var newPost = postModel.ToDomainModel();
+                _postService.Add(newPost);
+                return CreatedAtAction("Get", new { Id = postModel.Id }, postModel);
+            }
+            catch(Exception ex)
+            {
+                ModelState.AddModelError("AddPost", ex.Message);
+                return BadRequest(ModelState);
+            }     
         }
 
         // PUT /api/blogs/{blogId}/posts/{postId}
@@ -94,8 +107,18 @@ namespace CS321_W5D2_BlogAPI.Controllers
         public IActionResult Delete(int blogId, int postId)
         {
             // TODO: replace the code below with the correct implementation
-            ModelState.AddModelError("DeletePost", "Fix Me! Implement DELETE /api/blogs{blogId}/posts/{postId}");
-            return BadRequest(ModelState);
+
+            try
+            {
+                _postService.Remove(postId);
+                return NoContent();
+            }
+            catch(Exception ex)
+            {
+                ModelState.AddModelError("DeletePost", ex.Message);
+                return BadRequest(ModelState);
+            }
+            
         }
     }
 }
