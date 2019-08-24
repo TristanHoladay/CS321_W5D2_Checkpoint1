@@ -76,7 +76,7 @@ namespace CS321_W5D2_BlogAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env /*, DbInitializer dbInitializer*/)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, DbInitializer dbInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -113,6 +113,7 @@ namespace CS321_W5D2_BlogAPI
             });
 
             // TODO: add call to dbInitializer
+            dbInitializer.Initialize();
 
         }
     }
