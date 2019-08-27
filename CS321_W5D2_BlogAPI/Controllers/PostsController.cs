@@ -74,8 +74,9 @@ namespace CS321_W5D2_BlogAPI.Controllers
             // TODO: replace the code below with the correct implementation
             try
             {
-                
-                _postService.Add(postModel.ToDomainModel());
+                postModel.BlogId = blogId;
+                var newPost = postModel.ToDomainModel();
+                _postService.Add(newPost);
                 return CreatedAtAction("Get", new { Id = postModel.Id }, postModel);
             }
             catch(Exception ex)

@@ -24,7 +24,13 @@ namespace CS321_W5D2_BlogAPI.Core.Services
             //     You may have to retrieve the blog in order to check user id
             // TODO: assign the current date to DatePublished
 
-            var postUserID = newPost.Blog?.UserId;
+            Blog blog = _blogRepository.Get(newPost.BlogId);
+            if(blog == null)
+            {
+                throw new ApplicationException("Cannot find the associate blog.");
+            }
+
+            var postUserID = blog.UserId;
 
             if(_userService.CurrentUserId != postUserID)
             {
